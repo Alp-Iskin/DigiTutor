@@ -1,0 +1,15 @@
+node_modules/
+out/
+dist/
+build/
+*.log
+.DS_Store
+.env
+
+# Machine-local Claude Code permission settings (personal, not shared)
+.claude/settings.local.json
+
+# Website: never commit the installer binary or its generated manifest
+website/downloads/*.exe
+website/downloads/latest.json
+.netlify/

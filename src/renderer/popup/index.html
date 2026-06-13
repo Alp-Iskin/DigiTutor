@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdn.jsdelivr.net; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net;" />
+    <title>DigiTutor</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="bar">
+        <div class="brand">
+          <span class="dot"></span>
+          <span>DigiTutor</span>
+        </div>
+        <div class="bar-right">
+          <button id="auto-voice" class="auto-voice" title="Auto-listen after screenshot">🎙 Off</button>
+          <span id="status" class="status">Ready</span>
+          <button id="new-session" class="icon-btn" title="New session (clear chat)">＋</button>
+          <button id="gear" class="icon-btn" title="Settings">⚙</button>
+          <button id="close" class="icon-btn" title="Close (Esc)">✕</button>
+        </div>
+      </header>
+
+      <div id="banner" class="banner hidden"></div>
+      <div id="shots" class="shots hidden"></div>
+
+      <div id="scroll" class="scroll">
+        <div id="welcome" class="welcome">
+          <div class="welcome-badge"><span class="dot"></span></div>
+          <h2>Let's get studying</h2>
+          <p>Hit your hotkey to grab what's on your screen, then ask by voice or text.
+             I'll explain it, walk through the steps, and render the math.</p>
+        </div>
+        <div id="thread" class="thread"></div>
+      </div>
+
+      <div class="composer">
+        <div class="composer-left">
+          <button id="stop-read" class="stop-read hidden" title="Stop reading aloud">◼ Stop</button>
+          <button id="mic" class="mic-btn" title="Toggle microphone">🎤</button>
+        </div>
+        <textarea
+          id="input"
+          class="input"
+          rows="3"
+          placeholder="Ask about what's on your screen… (or speak)"></textarea>
+        <button id="send" class="send-btn" title="Send (Enter)">➤</button>
+      </div>
+
+      <footer class="hint">
+        <span><b>Enter</b> send · <b>Esc</b> close · hotkey again to add a screenshot</span>
+      </footer>
+    </div>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
