@@ -2,7 +2,7 @@
 //
 // Captures mic audio at 16 kHz mono and splits it into phrases on natural
 // pauses (silence detection). Each finished phrase is transcribed once and
-// APPENDED to the text — so passes stay short/fast (no re-processing the whole
+// APPENDED to the text - so passes stay short/fast (no re-processing the whole
 // utterance), text lands right after each pause, and earlier words don't churn.
 //
 // Replaces the Web Speech API, which doesn't work in Electron. Whisper is free,
@@ -120,7 +120,7 @@ export class Stt {
       })
     } catch {
       this.active = false
-      this.cb.onStatus('error', 'Microphone access denied — check Windows mic permissions.')
+      this.cb.onStatus('error', 'Microphone access denied - check Windows mic permissions.')
       return
     }
 

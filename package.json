@@ -1,6 +1,6 @@
 {
   "name": "digitutor",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A study tutor that lives in your system tray: hit a hotkey, it screenshots your screen, listens to your question, and answers with AI.",
   "main": "out/main/index.js",
   "author": "DigiTutor",
@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "geticon": "node scripts/gen-icon.mjs",
     "dist": "npm run build && npm run geticon && electron-builder",
-    "release:web": "node scripts/release-web.mjs"
+    "release:web": "node scripts/release-web.mjs",
+    "deploy:web": "netlify deploy --prod --dir=website",
+    "ship": "npm run dist && npm run release:web && npm run deploy:web"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "latest"

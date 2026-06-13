@@ -3,7 +3,7 @@ declare const self: DedicatedWorkerGlobalScope
 
 // Runs Whisper speech-to-text off the UI thread via transformers.js.
 // The model is downloaded once (cached by the browser/Electron) and then runs
-// fully locally — no API key, works offline, and is portable to a website.
+// fully locally - no API key, works offline, and is portable to a website.
 import { pipeline, env } from '@huggingface/transformers'
 
 // Always fetch the model from the Hugging Face hub (cached after first use).
@@ -58,7 +58,7 @@ async function getTranscriber(): Promise<Transcriber> {
 }
 
 // Transcription jobs must run strictly one-at-a-time in arrival order. The model
-// can't be invoked concurrently, and — more importantly — if two phrases were
+// can't be invoked concurrently, and - more importantly - if two phrases were
 // processed in parallel, whichever finished first would post first, reordering
 // the user's sentences (a short trailing phrase beating a longer earlier one).
 // This promise chain serializes them so the transcript stays in spoken order.

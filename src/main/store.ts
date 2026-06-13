@@ -61,7 +61,7 @@ function load(): StoreFile {
       }
       return cache
     } catch {
-      // Corrupt file — fall through to defaults.
+      // Corrupt file - fall through to defaults.
     }
   }
   cache = { settings: { ...DEFAULT_SETTINGS } }

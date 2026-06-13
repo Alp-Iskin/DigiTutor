@@ -79,8 +79,8 @@ function renderAutoVoice(): void {
   els.autoVoice.classList.toggle('on', on)
   els.autoVoice.textContent = on ? '🎙 Auto' : '🎙 Off'
   els.autoVoice.title = on
-    ? 'Auto-listen after screenshot is ON — click to turn off'
-    : 'Auto-listen after screenshot is OFF — click to turn on (or use the 🎤 to talk)'
+    ? 'Auto-listen after screenshot is ON - click to turn off'
+    : 'Auto-listen after screenshot is OFF - click to turn on (or use the 🎤 to talk)'
 }
 
 // Show the Stop-reading button whenever read-aloud is enabled in Settings.
@@ -96,7 +96,7 @@ function applyTtsState(s: TtsState): void {
   els.stopRead.textContent = s === 'loading' ? '◌ Voice' : '◼ Stop'
   els.stopRead.title =
     s === 'speaking'
-      ? 'Reading aloud — click to stop'
+      ? 'Reading aloud - click to stop'
       : s === 'loading'
         ? 'Preparing the voice…'
         : 'Read-aloud is on; nothing is being read right now'
@@ -234,7 +234,7 @@ function setupStt(): void {
     },
     onStatus: (status: SttStatus, detail?: string) => {
       if (status === 'unavailable') {
-        showBanner('Voice input isn’t available in this build — just type your question.')
+        showBanner('Voice input isn’t available in this build - just type your question.')
       } else if (status === 'loading') {
         setState('listening')
         const pct = detail ? ` ${detail}` : ''

@@ -40,8 +40,8 @@ const DEFAULT_MODEL: Record<string, string> = {
   openai: 'gpt-4o'
 }
 const DEPTH_HELP: Record<string, string> = {
-  deep: 'Richer, more nuanced answers — mechanisms, evidence, trade-offs — sourced from a broad range of reputable references (studies, courses, respected experts).',
-  classic: 'Shorter, focused, step-by-step answers — the original DigiTutor style.'
+  deep: 'Richer, more nuanced answers - mechanisms, evidence, trade-offs - sourced from a broad range of reputable references (studies, courses, respected experts).',
+  classic: 'Shorter, focused, step-by-step answers - the original DigiTutor style.'
 }
 const ENGINE_HELP: Record<string, string> = {
   natural: 'Downloads a small voice model the first time read-aloud runs, then speaks locally. Much more lifelike.',
@@ -166,7 +166,7 @@ el.save.addEventListener('click', async () => {
   const res = await window.digitutor.saveSettings(partial)
   el.hotkey.value = res.settings.hotkey
   if (res.hotkeyError) {
-    el.saved.textContent = 'Saved, but that hotkey was rejected — kept the old one.'
+    el.saved.textContent = 'Saved, but that hotkey was rejected - kept the old one.'
   } else {
     el.saved.textContent = 'Saved ✓'
   }

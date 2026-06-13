@@ -1,7 +1,7 @@
 // Text-to-speech with two engines:
-//   • 'natural' — Kokoro, a neural voice that sounds close to commercial voice
+//   • 'natural' - Kokoro, a neural voice that sounds close to commercial voice
 //     assistants, generated locally in a Web Worker (see kokoro.worker.ts).
-//   • 'system'  — the built-in Chromium Speech Synthesis voices (robotic, but
+//   • 'system'  - the built-in Chromium Speech Synthesis voices (robotic, but
 //     instant and a safe fallback if the Kokoro model can't load).
 import KokoroWorker from './kokoro.worker?worker'
 
@@ -66,7 +66,7 @@ export class Tts {
 
   constructor(
     private onState: (state: TtsState) => void,
-    // pct (0–100) while the voice model downloads; null once it's ready/loaded.
+    // pct (0-100) while the voice model downloads; null once it's ready/loaded.
     private onProgress?: (pct: number | null) => void
   ) {}
 
@@ -101,7 +101,7 @@ export class Tts {
     }
     const worker = this.ensureWorker()
     if (!worker) {
-      // Worker couldn't start — fall back to the system voice.
+      // Worker couldn't start - fall back to the system voice.
       this.speakSystem(text, opts)
       return
     }
@@ -162,7 +162,7 @@ export class Tts {
       this.onProgress?.(null)
       this.playBuffered()
     } else if (msg.type === 'error') {
-      // Loading/generation failed — give up gracefully (UI returns to idle).
+      // Loading/generation failed - give up gracefully (UI returns to idle).
       console.warn('[DigiTutor TTS] Kokoro error:', msg.error)
       this.onProgress?.(null)
       this.setState('idle')

@@ -4,7 +4,7 @@ declare const self: DedicatedWorkerGlobalScope
 // Natural-sounding text-to-speech off the UI thread via Kokoro (kokoro-js).
 // Kokoro is an 82M-parameter neural TTS that sounds close to commercial voice
 // assistants while running fully in-browser (ONNX). The model downloads once
-// (cached) and then generates locally — no API key, portable to a website.
+// (cached) and then generates locally - no API key, portable to a website.
 //
 // We use the *web* build of kokoro-js (aliased in electron.vite.config.ts);
 // the default build imports node's fs/path. The web build is self-contained
@@ -15,7 +15,7 @@ const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX'
 
 // Keep each generated chunk well under Kokoro's phoneme limit. Long run-on
 // "sentences" (e.g. a bullet list flattened to one line) otherwise get clipped
-// or dropped — that was the cause of audio cutting out partway through.
+// or dropped - that was the cause of audio cutting out partway through.
 const MAX_CHUNK_CHARS = 240
 
 let tts: KokoroTTS | null = null
@@ -57,7 +57,7 @@ async function getTTS(): Promise<KokoroTTS> {
         }
       }
       tts = model
-      // Report the backend actually used — WebGPU is fast enough to keep up,
+      // Report the backend actually used - WebGPU is fast enough to keep up,
       // WASM is the slow fallback (longer "preparing" wait before playback).
       self.postMessage({ type: 'ready', device })
       return model
@@ -88,7 +88,7 @@ function chunkText(text: string): string[] {
         window.lastIndexOf(', '),
         window.lastIndexOf('; '),
         window.lastIndexOf(': '),
-        window.lastIndexOf(' — '),
+        window.lastIndexOf(' - '),
         window.lastIndexOf(') ')
       )
       if (cut < MAX_CHUNK_CHARS * 0.5) cut = window.lastIndexOf(' ')
@@ -118,7 +118,7 @@ function trimSilence(audio: Float32Array, rate: number): Float32Array {
   let end = audio.length
   while (start < end && Math.abs(audio[start]) < thresh) start++
   while (end > start && Math.abs(audio[end - 1]) < thresh) end--
-  if (start >= end) return audio // all quiet — leave it alone
+  if (start >= end) return audio // all quiet - leave it alone
   const pad = Math.floor(0.04 * rate) // ~40 ms
   start = Math.max(0, start - pad)
   end = Math.min(audio.length, end + pad)
@@ -159,7 +159,7 @@ self.onmessage = async (e: MessageEvent) => {
           produced = true
         } catch (chunkErr) {
           // Skip a chunk that fails to phonemize/generate rather than aborting
-          // the whole answer — the rest still gets read.
+          // the whole answer - the rest still gets read.
           console.warn('[DigiTutor TTS] skipped a chunk:', chunkErr)
         }
       }

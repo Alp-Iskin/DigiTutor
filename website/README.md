@@ -1,7 +1,7 @@
 # DigiTutor download site
 
 A static landing page (`index.html` + `styles.css`) that hosts the Windows
-installer for download. **The installer is not committed to git** — it's copied
+installer for download. **The installer is not committed to git** - it's copied
 into `downloads/` at release time and uploaded straight to Netlify, so the source
 repo can stay private with nothing sensitive exposed.
 
@@ -22,7 +22,7 @@ private while the download stays public.
    ```
    netlify init      # or: netlify sites:create --name digitutor
    ```
-   (Do **not** enable Git-based auto-deploy — a git deploy wouldn't include the
+   (Do **not** enable Git-based auto-deploy - a git deploy wouldn't include the
    installer, which lives outside the repo. Always deploy with the CLI below.)
 
 ## Releasing a new version
@@ -51,7 +51,7 @@ steps. HTTPS is automatic.
 
 - The installer is **unsigned**, so SmartScreen warns on first run. The page already
   tells users to click *More info → Run anyway*. The real fix is a code-signing
-  certificate (Azure Trusted Signing is the cheapest path) — a later spend.
+  certificate (Azure Trusted Signing is the cheapest path) - a later spend.
 - If Netlify ever balks at the ~88 MB upload, host the binary on Cloudflare R2 (or a
   separate **public** GitHub repo used only for releases) and point
   `downloads/latest.json`'s `file` at that URL instead.
