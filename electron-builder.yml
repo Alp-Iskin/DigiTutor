@@ -1,0 +1,27 @@
+appId: com.digitutor.app
+productName: DigiTutor
+copyright: Copyright © 2026 DigiTutor
+
+directories:
+  output: dist
+  buildResources: build
+
+# The app is bundled into out/ by electron-vite; production node_modules
+# (e.g. the Anthropic SDK) are added automatically by electron-builder.
+files:
+  - out/**/*
+  - package.json
+
+win:
+  target:
+    - nsis
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: DigiTutor
+  artifactName: ${productName}-Setup-${version}.${ext}

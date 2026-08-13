@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';" />
+    <title>DigiTutor Settings</title>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1><span class="dot"></span> DigiTutor Settings</h1>
+
+      <section>
+        <h2>AI Provider</h2>
+        <label>Provider
+          <select id="provider">
+            <option value="claude">Claude (Anthropic) - recommended</option>
+            <option value="openai">OpenAI</option>
+          </select>
+        </label>
+        <label>Model
+          <input id="model" type="text" placeholder="claude-opus-4-8" />
+        </label>
+        <p class="help" id="model-help"></p>
+        <label>API key
+          <div class="row">
+            <input id="apikey" type="password" placeholder="Paste API key…" autocomplete="off" />
+            <button id="save-key" class="btn">Save key</button>
+          </div>
+        </label>
+        <p class="help">Status: <span id="key-status">checking…</span> · Stored encrypted on this device only.</p>
+      </section>
+
+      <section>
+        <h2>Trigger</h2>
+        <label>Global hotkey (screenshot + ask)
+          <input id="hotkey" type="text" placeholder="CommandOrControl+Shift+Space" />
+        </label>
+        <p class="help">Examples: <code>CommandOrControl+Shift+Space</code>, <code>Alt+Space</code>, <code>CommandOrControl+Shift+D</code></p>
+        <label>Microphone-only hotkey (ask by voice, no screenshot)
+          <input id="micHotkey" type="text" placeholder="CommandOrControl+Shift+M" />
+        </label>
+        <p class="help">Opens DigiTutor and starts listening right away, without grabbing the screen - for quick voice questions about anything.</p>
+      </section>
+
+      <section>
+        <h2>App</h2>
+        <label class="check"><input id="launchAtStartup" type="checkbox" /> Launch DigiTutor automatically when Windows starts</label>
+        <label class="check"><input id="autoVoice" type="checkbox" /> Auto-listen for voice right after each screenshot</label>
+        <p class="help">Auto-listen can also be toggled with the 🎙 button in the popup.</p>
+      </section>
+
+      <section>
+        <h2>Answers</h2>
+        <label>Answer style
+          <select id="answerDepth">
+            <option value="deep">Deep - in-depth & nuanced, broad expert sources (recommended)</option>
+            <option value="classic">Classic - concise, step-by-step</option>
+          </select>
+        </label>
+        <p class="help" id="depth-help"></p>
+        <label class="check"><input id="deepThinking" type="checkbox" /> Deep thinking (more accurate on math/science, slightly slower)</label>
+        <label class="check"><input id="includeResources" type="checkbox" /> Suggest study resources with answers (studies, courses & reputable experts - not just intro sites)</label>
+        <label>Extra instructions / persona
+          <textarea id="persona" rows="3" placeholder="e.g. I'm a first-year calculus student. Keep it simple and show every step."></textarea>
+        </label>
+      </section>
+
+      <section>
+        <h2>Voice</h2>
+        <label>Speech recognition language
+          <select id="sttLang">
+            <option value="en-US">English (US)</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="es-ES">Spanish</option>
+            <option value="fr-FR">French</option>
+            <option value="de-DE">German</option>
+            <option value="tr-TR">Turkish</option>
+            <option value="hi-IN">Hindi</option>
+            <option value="zh-CN">Chinese (Mandarin)</option>
+          </select>
+        </label>
+        <label class="check"><input id="readAloud" type="checkbox" /> Read answers aloud</label>
+        <label>Voice engine
+          <select id="ttsEngine">
+            <option value="natural">Natural - lifelike, offline (one-time ~90&nbsp;MB download)</option>
+            <option value="system">System - robotic but instant</option>
+          </select>
+        </label>
+        <p class="help" id="engine-help"></p>
+        <label>Voice
+          <select id="ttsVoice"><option value="">Default</option></select>
+        </label>
+        <label>Speech rate: <span id="rate-val">1.0</span>×
+          <input id="ttsRate" type="range" min="0.5" max="2" step="0.1" value="1" />
+        </label>
+        <p class="help">A stop button appears in the popup while read-aloud is on, so you can cut the voice off any time.</p>
+      </section>
+
+      <div class="actions">
+        <span id="saved" class="saved"></span>
+        <button id="save" class="btn primary">Save settings</button>
+      </div>
+    </div>
+    <script type="module" src="./settings.ts"></script>
+  </body>
+</html>
