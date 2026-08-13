@@ -17,6 +17,12 @@ win:
     - nsis
   icon: build/icon.ico
 
+mac:
+  target:
+    - dmg
+  icon: build/icon.png
+  category: public.app-category.education
+
 nsis:
   oneClick: false
   perMachine: false

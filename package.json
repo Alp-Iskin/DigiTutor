@@ -17,7 +17,7 @@
     "ship": "npm run dist && npm run release:web && npm run deploy:web"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "latest"
+    "@anthropic-ai/sdk": "^0.52.0"
   },
   "overrides": {
     "kokoro-js": {
