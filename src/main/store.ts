@@ -1,6 +1,12 @@
 import { app, safeStorage } from 'electron'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
+import {
+  ApiKeySaveResult,
+  ApiKeyStatus,
+  classifyStoredApiKey,
+  readUsableApiKey
+} from './api-key-policy'
 
 export interface Settings {
   hotkey: string
@@ -40,7 +46,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
 interface StoreFile {
   settings: Settings
-  apiKeyEnc?: string // base64 of safeStorage-encrypted API key
+  apiKeyEnc?: string // base64 of a safeStorage-encrypted API key
 }
 
 let cache: StoreFile | null = null
@@ -57,7 +63,7 @@ function load(): StoreFile {
       const raw = JSON.parse(readFileSync(path, 'utf-8'))
       cache = {
         settings: { ...DEFAULT_SETTINGS, ...(raw.settings ?? {}) },
-        apiKeyEnc: raw.apiKeyEnc
+        apiKeyEnc: typeof raw.apiKeyEnc === 'string' ? raw.apiKeyEnc : undefined
       }
       return cache
     } catch {
@@ -84,32 +90,76 @@ export function saveSettings(partial: Partial<Settings>): Settings {
   return { ...data.settings }
 }
 
-export function hasApiKey(): boolean {
-  return !!load().apiKeyEnc
+// Electron can fall back to `basic_text` on Linux. That backend is reversible
+// obfuscation, not protected secret storage, so fail closed there too.
+function secureStorageAvailable(): boolean {
+  try {
+    if (!safeStorage.isEncryptionAvailable()) return false
+    if (process.platform === 'linux') {
+      const backend = safeStorage.getSelectedStorageBackend()
+      if (backend === 'basic_text' || backend === 'unknown') return false
+    }
+    return true
+  } catch {
+    return false
+  }
 }
 
-export function setApiKey(key: string): void {
+function decryptStoredKey(encoded: string): string {
+  return safeStorage.decryptString(Buffer.from(encoded, 'base64'))
+}
+
+export function getApiKeyStatus(): ApiKeyStatus {
+  return classifyStoredApiKey(
+    load().apiKeyEnc,
+    secureStorageAvailable(),
+    decryptStoredKey
+  )
+}
+
+export function setApiKey(key: string): ApiKeySaveResult {
   const data = load()
   if (!key) {
+    const previous = data.apiKeyEnc
     data.apiKeyEnc = undefined
-  } else if (safeStorage.isEncryptionAvailable()) {
-    data.apiKeyEnc = safeStorage.encryptString(key).toString('base64')
-  } else {
-    // Fallback: store as base64 (not encrypted) if OS keychain is unavailable.
-    data.apiKeyEnc = 'plain:' + Buffer.from(key, 'utf-8').toString('base64')
+    try {
+      persist()
+      return { ok: true, status: getApiKeyStatus() }
+    } catch {
+      data.apiKeyEnc = previous
+      return { ok: false, error: 'write-failed', status: getApiKeyStatus() }
+    }
   }
-  persist()
+
+  if (!secureStorageAvailable()) {
+    return {
+      ok: false,
+      error: 'secure-storage-unavailable',
+      status: getApiKeyStatus()
+    }
+  }
+
+  let encrypted: string
+  try {
+    const encryptedBuffer = safeStorage.encryptString(key)
+    // Verify the protected value before replacing anything already stored.
+    if (safeStorage.decryptString(encryptedBuffer) !== key) throw new Error('round-trip failed')
+    encrypted = encryptedBuffer.toString('base64')
+  } catch {
+    return { ok: false, error: 'encryption-failed', status: getApiKeyStatus() }
+  }
+
+  const previous = data.apiKeyEnc
+  data.apiKeyEnc = encrypted
+  try {
+    persist()
+    return { ok: true, status: getApiKeyStatus() }
+  } catch {
+    data.apiKeyEnc = previous
+    return { ok: false, error: 'write-failed', status: getApiKeyStatus() }
+  }
 }
 
 export function getApiKey(): string | null {
-  const enc = load().apiKeyEnc
-  if (!enc) return null
-  if (enc.startsWith('plain:')) {
-    return Buffer.from(enc.slice('plain:'.length), 'base64').toString('utf-8')
-  }
-  try {
-    return safeStorage.decryptString(Buffer.from(enc, 'base64'))
-  } catch {
-    return null
-  }
+  return readUsableApiKey(load().apiKeyEnc, secureStorageAvailable(), decryptStoredKey)
 }

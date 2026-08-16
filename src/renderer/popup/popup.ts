@@ -3,7 +3,7 @@ import 'katex/dist/katex.min.css'
 import { renderMarkdown } from './render'
 import { Stt, SttStatus } from './stt'
 import { Tts, TtsState } from './tts'
-import type { Settings, ChatMessage } from '../global'
+import type { ApiKeyStatus, Settings, ChatMessage } from '../global'
 
 type State = 'idle' | 'listening' | 'thinking' | 'ready'
 
@@ -110,6 +110,23 @@ function showBanner(html: string, info = false): void {
 }
 function hideBanner(): void {
   els.banner.classList.add('hidden')
+}
+
+function showApiKeyBanner(status: ApiKeyStatus): void {
+  let message = 'Add your API key to begin.'
+  if (status.state === 'legacy-insecure') {
+    message = 'A legacy insecure API key is disabled. Replace it securely in Settings.'
+  } else if (status.state === 'locked') {
+    message = 'Your encrypted API key is unavailable because secure OS storage is locked or unavailable.'
+  } else if (status.state === 'unreadable') {
+    message = 'Your stored API key could not be decrypted. Replace it securely in Settings.'
+  } else if (!status.canStoreSecurely) {
+    message = 'Secure OS key storage is unavailable, so DigiTutor will not save an API key.'
+  }
+  showBanner(`${message} <a id="open-settings-link">Open Settings →</a>`)
+  document
+    .getElementById('open-settings-link')
+    ?.addEventListener('click', () => window.digitutor.openSettings())
 }
 
 function updateWelcome(): void {
@@ -338,10 +355,7 @@ async function submit(): Promise<void> {
     updateWelcome()
     setState('idle')
     if (result.error === 'no-key') {
-      showBanner('Add your API key to start. <a id="open-settings-link">Open Settings →</a>')
-      document
-        .getElementById('open-settings-link')
-        ?.addEventListener('click', () => window.digitutor.openSettings())
+      showApiKeyBanner(await window.digitutor.getApiKeyStatus())
     } else if (result.error !== 'aborted') {
       showBanner('Error: ' + result.error)
     }
@@ -376,7 +390,7 @@ function newSession(): void {
 function onActivate(payload: {
   screenshot: string | null
   settings: Settings
-  hasKey: boolean
+  apiKeyStatus: ApiKeyStatus
   autoListen?: boolean
 }): void {
   settings = payload.settings
@@ -396,12 +410,7 @@ function onActivate(payload: {
   scrollToBottom()
   measure()
 
-  if (!payload.hasKey) {
-    showBanner('Welcome! Add your API key to begin. <a id="open-settings-link">Open Settings →</a>')
-    document
-      .getElementById('open-settings-link')
-      ?.addEventListener('click', () => window.digitutor.openSettings())
-  }
+  if (payload.apiKeyStatus.state !== 'ready') showApiKeyBanner(payload.apiKeyStatus)
 
   // Start listening immediately for a mic-only trigger, or when Auto-voice is on
   // after a screenshot.

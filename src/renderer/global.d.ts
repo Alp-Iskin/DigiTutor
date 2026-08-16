@@ -1,3 +1,7 @@
+import type { ApiKeySaveResult, ApiKeyStatus } from '../main/api-key-policy'
+
+export type { ApiKeySaveResult, ApiKeyStatus }
+
 export interface Settings {
   hotkey: string
   micHotkey: string
@@ -19,7 +23,7 @@ export interface Settings {
 export interface ActivatePayload {
   screenshot: string | null
   settings: Settings
-  hasKey: boolean
+  apiKeyStatus: ApiKeyStatus
   autoListen?: boolean
 }
 
@@ -46,8 +50,8 @@ export interface DigiTutorApi {
   saveSettings(
     partial: Partial<Settings>
   ): Promise<{ settings: Settings; hotkeyError: boolean }>
-  getApiKeyStatus(): Promise<boolean>
-  setApiKey(key: string): Promise<boolean>
+  getApiKeyStatus(): Promise<ApiKeyStatus>
+  setApiKey(key: string): Promise<ApiKeySaveResult>
 }
 
 declare global {

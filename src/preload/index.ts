@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { ApiKeySaveResult, ApiKeyStatus } from '../main/api-key-policy'
 
 export interface Settings {
   hotkey: string
@@ -21,7 +22,7 @@ export interface Settings {
 export interface ActivatePayload {
   screenshot: string | null
   settings: Settings
-  hasKey: boolean
+  apiKeyStatus: ApiKeyStatus
   autoListen?: boolean
 }
 
@@ -58,9 +59,9 @@ const api = {
       hotkeyError: boolean
     }>,
   getApiKeyStatus: () =>
-    ipcRenderer.invoke('settings:apikey-status') as Promise<boolean>,
+    ipcRenderer.invoke('settings:apikey-status') as Promise<ApiKeyStatus>,
   setApiKey: (key: string) =>
-    ipcRenderer.invoke('settings:apikey-set', key) as Promise<boolean>
+    ipcRenderer.invoke('settings:apikey-set', key) as Promise<ApiKeySaveResult>
 }
 
 contextBridge.exposeInMainWorld('digitutor', api)

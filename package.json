@@ -10,6 +10,9 @@
     "build": "electron-vite build",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit",
+    "check:sdk-pin": "node scripts/check-sdk-pin.mjs",
+    "check:key-storage": "node scripts/check-key-storage.mjs",
+    "validate": "npm run typecheck && npm run check:sdk-pin && npm run check:key-storage",
     "geticon": "node scripts/gen-icon.mjs",
     "dist": "npm run build && npm run geticon && electron-builder",
     "release:web": "node scripts/release-web.mjs",
@@ -17,7 +20,7 @@
     "ship": "npm run dist && npm run release:web && npm run deploy:web"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.52.0"
+    "@anthropic-ai/sdk": "0.52.0"
   },
   "overrides": {
     "kokoro-js": {

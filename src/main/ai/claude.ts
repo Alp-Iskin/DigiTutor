@@ -33,7 +33,7 @@ export async function askClaude(params: AskParams): Promise<AskResult> {
   }
   if (params.deepThinking) {
     // Adaptive thinking improves accuracy on math/science (Opus 4.6+).
-    ;(body as Record<string, unknown>).thinking = { type: 'adaptive' }
+    ;(body as unknown as Record<string, unknown>).thinking = { type: 'adaptive' }
   }
 
   const stream = client.messages.stream(body, { signal: params.signal })

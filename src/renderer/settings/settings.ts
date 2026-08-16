@@ -1,5 +1,6 @@
 import './styles.css'
 import { NATURAL_VOICES } from '../popup/voices'
+import type { ApiKeySaveError, ApiKeyStatus } from '../../main/api-key-policy'
 import type { Settings } from '../global'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -58,10 +59,55 @@ function updateEngineHelp(): void {
   el.engineHelp.textContent = ENGINE_HELP[el.ttsEngine.value] ?? ''
 }
 
+const SAVE_ERROR: Record<ApiKeySaveError, string> = {
+  'secure-storage-unavailable':
+    'Not saved; any existing value was left unchanged. Enable or unlock your OS keychain/secret store, restart DigiTutor, and paste the key again.',
+  'encryption-failed':
+    'Not saved; any existing value was left unchanged because secure encryption failed. Restart DigiTutor and paste the key again.',
+  'write-failed':
+    'Not saved; the previous in-memory value was restored because the settings file could not be written. Check its permissions and try again.'
+}
+
+function renderKeyStatus(status: ApiKeyStatus, saveError?: ApiKeySaveError): void {
+  const unavailable = !status.canStoreSecurely
+  if (unavailable) el.apikey.value = ''
+  el.apikey.disabled = unavailable
+  el.saveKey.disabled = unavailable
+
+  if (saveError) {
+    el.keyStatus.textContent = SAVE_ERROR[saveError]
+    el.keyStatus.className = 'error'
+    return
+  }
+
+  if (status.state === 'ready') {
+    el.keyStatus.textContent = 'set securely ✓'
+    el.keyStatus.className = 'set'
+  } else if (status.state === 'legacy-insecure') {
+    el.keyStatus.textContent = unavailable
+      ? 'A legacy base64 key is present but disabled and unchanged. Enable or unlock your OS keychain/secret store, restart DigiTutor, then paste the key again to replace it securely.'
+      : 'A legacy base64 key is present but disabled and unchanged. Paste the key again to replace it with secure storage.'
+    el.keyStatus.className = 'error'
+  } else if (status.state === 'locked') {
+    el.keyStatus.textContent =
+      'An encrypted key exists, but secure OS storage is unavailable. Enable or unlock your keychain/secret store and restart DigiTutor.'
+    el.keyStatus.className = 'error'
+  } else if (status.state === 'unreadable') {
+    el.keyStatus.textContent =
+      'The stored encrypted key could not be decrypted. Paste the key again to replace it securely.'
+    el.keyStatus.className = 'error'
+  } else if (unavailable) {
+    el.keyStatus.textContent =
+      'not set. Enable or unlock your OS keychain/secret store, restart DigiTutor, then paste the key.'
+    el.keyStatus.className = 'error'
+  } else {
+    el.keyStatus.textContent = 'not set'
+    el.keyStatus.className = 'unset'
+  }
+}
+
 async function refreshKeyStatus(): Promise<void> {
-  const has = await window.digitutor.getApiKeyStatus()
-  el.keyStatus.textContent = has ? 'set ✓' : 'not set'
-  el.keyStatus.className = has ? 'set' : 'unset'
+  renderKeyStatus(await window.digitutor.getApiKeyStatus())
 }
 
 // Populate the Voice dropdown based on the chosen engine. Natural = Kokoro's
@@ -140,9 +186,10 @@ el.ttsRate.addEventListener('input', () => {
 el.saveKey.addEventListener('click', async () => {
   const key = el.apikey.value.trim()
   if (!key) return
-  await window.digitutor.setApiKey(key)
+  const result = await window.digitutor.setApiKey(key)
+  // Never leave a pasted secret sitting in the renderer after the attempt.
   el.apikey.value = ''
-  await refreshKeyStatus()
+  renderKeyStatus(result.status, result.ok ? undefined : result.error)
 })
 
 el.save.addEventListener('click', async () => {

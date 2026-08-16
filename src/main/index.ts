@@ -16,7 +16,7 @@ import {
   getSettings,
   saveSettings,
   Settings,
-  hasApiKey,
+  getApiKeyStatus,
   getApiKey,
   setApiKey
 } from './store'
@@ -99,6 +99,7 @@ async function activatePopup(
       console.error('Screenshot failed:', err)
     }
   }
+  const apiKeyStatus = getApiKeyStatus()
   positionPopup(POPUP_MIN_HEIGHT)
   popup!.showInactive()
   popup!.setAlwaysOnTop(true, 'screen-saver')
@@ -107,7 +108,7 @@ async function activatePopup(
   popup!.webContents.send('popup:activate', {
     screenshot,
     settings: getSettings(),
-    hasKey: hasApiKey(),
+    apiKeyStatus,
     autoListen
   })
 }
@@ -243,7 +244,6 @@ function registerIpc(): void {
 
   // Ask the AI. Streams chunks via 'ai:chunk'; resolves when complete.
   ipcMain.handle('ai:ask', async (event, payload: { messages: ChatMessage[] }) => {
-    if (!hasApiKey()) return { ok: false, error: 'no-key' }
     const apiKey = getApiKey()
     if (!apiKey) return { ok: false, error: 'no-key' }
 
@@ -292,11 +292,8 @@ function registerIpc(): void {
     refreshTrayMenu()
     return { settings: after, hotkeyError: false }
   })
-  ipcMain.handle('settings:apikey-status', () => hasApiKey())
-  ipcMain.handle('settings:apikey-set', (_e, key: string) => {
-    setApiKey(key)
-    return hasApiKey()
-  })
+  ipcMain.handle('settings:apikey-status', () => getApiKeyStatus())
+  ipcMain.handle('settings:apikey-set', (_e, key: string) => setApiKey(key))
 }
 
 // ---------- app lifecycle ----------
