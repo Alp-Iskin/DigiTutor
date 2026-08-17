@@ -31,7 +31,7 @@
           <a id="download-btn" class="btn-primary" href="downloads/DigiTutor-Setup.exe" download>
             ⬇ Download for Windows
           </a>
-          <a id="download-btn-mac" class="btn-secondary" href="downloads/DigiTutor-0.2.3.dmg" download>
+          <a id="download-btn-mac" class="btn-secondary" href="downloads/DigiTutor.dmg" download>
             ⬇ Download for Mac
           </a>
           <p class="meta">
@@ -104,13 +104,33 @@
     </footer>
 
     <script>
-      // Pull the current version + download path from the deploy manifest, if present.
+      // Pull the current version + per-platform download paths from the deploy
+      // manifest written by scripts/release-web.mjs.
+      //
+      // Each button is only shown if the manifest actually reports an artifact
+      // for that platform. Previously the Mac button was hard-coded in the HTML
+      // and shown unconditionally, so whenever the .dmg had not been staged the
+      // button was visible but returned 404 — a dead link is worse than no link.
+      // `m.file` is the legacy Windows-only field, still honoured as a fallback.
       fetch('downloads/latest.json', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .then((m) => {
           if (!m) return
           if (m.version) document.getElementById('version').textContent = 'v' + m.version
-          if (m.file) document.getElementById('download-btn').setAttribute('href', m.file)
+
+          const wire = (id, href) => {
+            const el = document.getElementById(id)
+            if (!el) return
+            if (href) {
+              el.setAttribute('href', href)
+              el.hidden = false
+            } else {
+              el.hidden = true
+            }
+          }
+
+          wire('download-btn', m.win ?? m.file)
+          wire('download-btn-mac', m.mac)
         })
         .catch(() => {})
     </script>

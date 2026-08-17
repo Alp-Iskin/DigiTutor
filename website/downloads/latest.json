@@ -1,5 +1,7 @@
 {
   "version": "0.2.3",
-  "file": "downloads/DigiTutor-Setup.exe",
-  "released": "2026-06-13"
+  "released": "2026-08-17",
+  "file": null,
+  "win": null,
+  "mac": "downloads/DigiTutor.dmg"
 }
