@@ -1,7 +1,17 @@
 {
-  "version": "0.2.3",
-  "released": "2026-08-17",
+  "version": "0.2.4",
+  "released": "2026-08-20",
   "file": "downloads/DigiTutor-Setup.exe",
   "win": "downloads/DigiTutor-Setup.exe",
-  "mac": "downloads/DigiTutor.dmg"
+  "mac": "downloads/DigiTutor.dmg",
+  "artifacts": {
+    "win": {
+      "sha256": "ded3c8f4ebea8f1ed61d0af08bd0c87c6f4c4121b40e5f1ef9d590c9c1ea9833",
+      "bytes": 109211514
+    },
+    "mac": {
+      "sha256": "e75929434ed0ca1e4dec94fc5cb1e3b5c948657446d87ea46caf6af52a06e928",
+      "bytes": 224752766
+    }
+  }
 }
