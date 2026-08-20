@@ -1,17 +1,15 @@
 # DigiTutor
 
-A study tutor that lives in your system tray. Press a hotkey while studying and DigiTutor
-**screenshots your screen, listens to your question, and answers with AI** in a small
-popup at the bottom-right of your screen — answers stream in with proper math rendering,
-can be read aloud, and can suggest study resources.
-
-Built for the workflow of: "I'm stuck on this slide → hotkey → talk → get a clear answer."
+DigiTutor is a desktop study assistant I built for the moments when I am working through
+notes, slides, or problem sets and need a clearer explanation without losing my place.
+It stays in the system tray, opens with a hotkey, accepts questions by text or voice, and
+can include a screenshot when the question needs visual context. Answers stream into a
+small popup with math rendering, optional read-aloud, and suggested study resources.
 
 [Download DigiTutor](https://yourdigitutor.netlify.app/) · [View the source on GitHub](https://github.com/Alp-Iskin/DigiTutor)
 
-This is a student project by Alp Iskin. I began with the screen-aware tutor idea and
-expanded it through iterative, AI-assisted development. I can explain the architecture,
-the security tradeoffs, and the testing behind the current version.
+I started DigiTutor for my own study workflow, then used AI tools while I expanded and
+debugged it. The architecture, tradeoffs, and current limitations are documented below.
 
 ## How it works
 
@@ -37,7 +35,7 @@ npm install
 npm run dev
 ```
 
-Run the local engineering checks with:
+Run the project checks with:
 
 ```bash
 npm run validate   # TypeScript, exact Anthropic SDK pin, fail-closed key policy
@@ -52,7 +50,7 @@ to enable or unlock the OS keychain/secret store. Legacy `plain:` base64 values 
 left unchanged but disabled; paste the key again once secure storage is available to
 replace the legacy value securely.
 
-- **Claude (recommended):** get a key at https://console.anthropic.com → default model `claude-opus-4-8`.
+- **Claude:** get a key at https://console.anthropic.com → default model `claude-opus-4-8`.
 - **OpenAI:** use a vision-capable model like `gpt-4o`.
 
 ## Build a distributable
@@ -67,10 +65,10 @@ npm run dist:win   # unsigned x64 installer for Windows 10/11
 The downloadable builds are not code-signed yet. Windows may show SmartScreen, and
 macOS may require approval in **System Settings → Privacy & Security**. macOS also asks
 for Screen Recording and Microphone permission when those features are first used.
-The Windows x64 package is built on GitHub's Windows runner, while the universal macOS
-package contains both Apple Silicon and Intel executables. That confirms the packaging,
-not every hardware, permission, or provider combination; broader runtime testing is
-still part of the roadmap.
+The Windows x64 package is built and checked in GitHub Actions. I confirmed that the
+universal macOS package contains both Apple Silicon and Intel executables and smoke-tested
+the current Mac build. The Windows installer still needs a real-device smoke test, and
+neither package has been tested across every hardware and provider combination.
 
 ## Architecture
 

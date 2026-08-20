@@ -112,28 +112,36 @@ a {
 .download {
   margin: 10px 0 6px;
 }
-.btn-primary,
-.btn-secondary {
-  display: inline-block;
+.download-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.download-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
   text-decoration: none;
   color: #fff;
   font-weight: 600;
-  font-size: 17px;
-  padding: 14px 28px;
+  font-size: 16px;
+  padding: 14px 18px;
   border-radius: 12px;
-  margin: 6px 4px;
-}
-.btn-primary {
   background: linear-gradient(135deg, var(--brand-2), var(--brand));
-  box-shadow: 0 10px 30px rgba(79, 124, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 26px rgba(79, 124, 255, 0.28);
+  transition: filter 120ms ease, transform 120ms ease;
 }
-.btn-secondary {
-  background: var(--panel-2);
-  border: 1px solid var(--border);
-}
-.btn-primary:hover,
-.btn-secondary:hover {
+.download-button:hover {
   filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.download-button:focus-visible {
+  outline: 3px solid rgba(111, 147, 255, 0.55);
+  outline-offset: 3px;
 }
 .meta {
   font-size: 13px;
@@ -245,6 +253,9 @@ code {
 @media (max-width: 720px) {
   .hero h1 {
     font-size: 32px;
+  }
+  .download-actions {
+    grid-template-columns: 1fr;
   }
   .features {
     grid-template-columns: 1fr;

@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DigiTutor - your screen-aware study tutor</title>
+    <title>DigiTutor - ask questions without leaving your work</title>
     <meta
       name="description"
-      content="DigiTutor lives in your system tray. Hit a hotkey, capture screen context, ask by voice or text, and receive a streamed AI explanation with rendered math and optional resource suggestions." />
+      content="A desktop study assistant for notes, slides, and problem sets. Ask by text or voice and include a screenshot when visual context helps." />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -24,36 +24,38 @@
     <main>
       <section class="hero">
         <div class="badge"><span class="glyph big"></span></div>
-        <h1>Your screen-aware study tutor.</h1>
+        <h1>Ask questions without leaving what you're studying.</h1>
         <p class="sub">
-          DigiTutor is packaged for Windows x64 and universal macOS. Use a hotkey to capture screen context,
-          ask by voice or text, and stream an explanation with rendered math, optional read-aloud, and
-          suggested resources.
+          DigiTutor stays in your system tray while you work through notes, slides, or problem sets.
+          Open it with a hotkey, ask by text or voice, and include a screenshot when your question
+          needs visual context.
         </p>
         <div id="download" class="download">
-          <a id="download-btn" class="btn-primary" href="downloads/DigiTutor-Setup.exe" download>
-            ⬇ Download for Windows
-          </a>
-          <a id="download-btn-mac" class="btn-secondary" href="downloads/DigiTutor.dmg" download>
-            ⬇ Download for Mac (Apple Silicon + Intel)
-          </a>
-          <p class="meta">
+          <div class="download-actions">
+            <a id="download-btn" class="download-button" href="downloads/DigiTutor-Setup.exe" download>
+              ↓ Download for Windows
+            </a>
+            <a id="download-btn-mac" class="download-button" href="downloads/DigiTutor.dmg" download>
+              ↓ Download for macOS
+            </a>
+          </div>
+          <p id="download-meta" class="meta">
             <span id="version">Latest release</span> · Windows x64 · Apple Silicon + Intel Mac
           </p>
         </div>
         <p class="note">
-          On first launch Windows SmartScreen may warn (the app isn't code-signed yet). Click
-          <b>More info → Run anyway</b>. On Mac, allow the app in System Settings → Privacy & Security if Gatekeeper blocks it.
-          These packages are tested as builds, but not yet across every hardware and provider combination.
+          Both installers are unsigned. I smoke-tested the Mac build; the Windows installer is built
+          and checked in GitHub Actions but still needs a real-device test. Windows may show SmartScreen,
+          and macOS may ask you to approve the app in <b>Privacy &amp; Security</b>.
         </p>
       </section>
 
       <section class="features">
         <div class="card">
-          <h3>① Trigger</h3>
+          <h3>① Bring your work with you</h3>
           <p>
-            Press your global hotkey (default <code>Ctrl/Cmd+Shift+Space</code>) and DigiTutor screenshots
-            the screen your cursor is on. Or use the mic-only hotkey to just ask by voice.
+            Press <code>Ctrl/Cmd+Shift+Space</code> to open DigiTutor with a screenshot of what you are
+            studying, or use the mic-only hotkey when you do not need screen context.
           </p>
         </div>
         <div class="card">
@@ -66,8 +68,8 @@
         <div class="card">
           <h3>③ Learn</h3>
           <p>
-            Answers stream back with Markdown and rendered LaTeX, can be read aloud in a natural
-            voice, and can include resource links suggested by the selected AI model.
+            Get a streamed explanation with Markdown and rendered LaTeX. You can have it read aloud
+            or ask the selected AI model to suggest useful resource links.
           </p>
         </div>
       </section>
@@ -75,10 +77,10 @@
       <section class="key">
         <h2>You bring your own AI key</h2>
         <p>
-          DigiTutor runs on <b>your</b> Claude (Anthropic) or OpenAI API key. Electron protects a saved
-          key with OS-backed secure storage; if that protection is unavailable, DigiTutor refuses to
-          save the key. Provider requests go directly from the desktop app - there are no DigiTutor
-          accounts, subscriptions, or intermediary servers.
+          DigiTutor uses <b>your</b> Claude (Anthropic) or OpenAI API key. It saves the key through
+          Electron's OS-backed secure storage; if that protection is unavailable, the app will not
+          save a new key. Requests go directly from the desktop app to your selected provider. There
+          are no DigiTutor accounts, subscriptions, or intermediary servers.
         </p>
         <p class="links">
           Get a key:
