@@ -1,6 +1,9 @@
 name: Build Windows installer
 
 on:
+  push:
+    branches:
+      - codex/digitutor-cross-platform-release
   pull_request:
   workflow_dispatch:
 
