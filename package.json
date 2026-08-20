@@ -19,7 +19,7 @@
     "geticon": "node scripts/gen-icon.mjs",
     "dist": "npm run build && npm run geticon && electron-builder",
     "dist:mac": "npm run build && npm run geticon && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --universal",
-    "dist:win": "npm run build && npm run geticon && electron-builder --win --x64",
+    "dist:win": "npm run build && npm run geticon && electron-builder --win --x64 --publish never",
     "release:web": "node scripts/release-web.mjs",
     "deploy:web": "netlify deploy --prod --dir=website",
     "ship": "npm run dist && npm run release:web && npm run deploy:web"
