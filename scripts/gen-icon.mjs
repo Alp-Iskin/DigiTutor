@@ -117,9 +117,12 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = resolve(root, 'build')
 mkdirSync(outDir, { recursive: true })
 
-const sizes = [16, 32, 48, 64, 128, 256]
-const pngs = sizes.map((size) => ({ size, data: encodePng(draw(size), size) }))
+const icoSizes = [16, 32, 48, 64, 128, 256]
+const pngs = icoSizes.map((size) => ({ size, data: encodePng(draw(size), size) }))
+const macIconSize = 1024
 
-writeFileSync(resolve(outDir, 'icon.png'), pngs[pngs.length - 1].data) // 256px PNG
+// Current electron-builder versions require at least 512px when converting the
+// source PNG into a macOS icon set. Windows ICO entries still top out at 256px.
+writeFileSync(resolve(outDir, 'icon.png'), encodePng(draw(macIconSize), macIconSize))
 writeFileSync(resolve(outDir, 'icon.ico'), encodeIco(pngs))
 console.log('Wrote build/icon.ico and build/icon.png')

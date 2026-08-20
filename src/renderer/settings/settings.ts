@@ -46,7 +46,7 @@ const DEPTH_HELP: Record<string, string> = {
 }
 const ENGINE_HELP: Record<string, string> = {
   natural: 'Downloads a small voice model the first time read-aloud runs, then speaks locally. Much more lifelike.',
-  system: "Uses Windows' built-in voices. No download, but sounds robotic."
+  system: "Uses your computer's built-in voices. No download, but sounds more robotic."
 }
 
 function updateModelHelp(): void {

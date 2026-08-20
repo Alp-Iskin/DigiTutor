@@ -1,6 +1,6 @@
 appId: com.digitutor.app
 productName: DigiTutor
-copyright: Copyright © 2026 DigiTutor
+copyright: Copyright © 2026 Alp Iskin
 
 directories:
   output: dist
@@ -19,7 +19,11 @@ win:
 
 mac:
   target:
-    - dmg
+    # One installer supports both Apple Silicon and Intel Macs. Keeping this in
+    # the config also makes a plain `npm run dist` do the right thing on macOS.
+    - target: dmg
+      arch:
+        - universal
   icon: build/icon.png
   category: public.app-category.education
 

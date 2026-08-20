@@ -56,6 +56,15 @@ a {
   font-weight: 650;
   font-size: 16px;
 }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+}
+.nav-links > a:not(.nav-cta) {
+  text-decoration: none;
+}
 .nav-cta {
   text-decoration: none;
   color: var(--text);
@@ -103,18 +112,27 @@ a {
 .download {
   margin: 10px 0 6px;
 }
-.btn-primary {
+.btn-primary,
+.btn-secondary {
   display: inline-block;
   text-decoration: none;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand));
   color: #fff;
   font-weight: 600;
   font-size: 17px;
   padding: 14px 28px;
   border-radius: 12px;
+  margin: 6px 4px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-2), var(--brand));
   box-shadow: 0 10px 30px rgba(79, 124, 255, 0.4);
 }
-.btn-primary:hover {
+.btn-secondary {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.btn-primary:hover,
+.btn-secondary:hover {
   filter: brightness(1.08);
 }
 .meta {
@@ -184,6 +202,10 @@ a {
   color: var(--muted);
   padding-left: 20px;
 }
+.install h3 {
+  margin: 20px 0 6px;
+  font-size: 17px;
+}
 .install li {
   margin: 6px 0;
 }
@@ -216,6 +238,9 @@ code {
   width: 14px;
   height: 14px;
 }
+.foot a {
+  color: inherit;
+}
 
 @media (max-width: 720px) {
   .hero h1 {
@@ -223,5 +248,10 @@ code {
   }
   .features {
     grid-template-columns: 1fr;
+  }
+  .foot {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
 }

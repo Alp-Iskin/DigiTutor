@@ -1,15 +1,15 @@
 # DigiTutor download site
 
-A static landing page (`index.html` + `styles.css`) that hosts the Windows
-installer for download. **The installer is not committed to git** - it's copied
-into `downloads/` at release time and uploaded straight to Netlify, so the source
-repo can stay private with nothing sensitive exposed.
+A static landing page (`index.html` + `styles.css`) that hosts Windows and macOS
+installers. **The installers are not committed to git** - they're copied
+into `downloads/` at release time and uploaded straight to Netlify, which keeps
+large generated binaries out of the source repository.
 
-## Why not GitHub Releases?
+## Why Netlify hosts the downloads
 
-GitHub Release assets on a **private** repo require authentication to download, so
-they can't be a public download link. Hosting the `.exe` on Netlify keeps the repo
-private while the download stays public.
+It keeps the landing page and stable download URLs in one deployment. GitHub
+Releases would also work now that the repository is public, but changing hosts is
+not necessary for this release workflow.
 
 ## First-time setup (once)
 
@@ -28,8 +28,9 @@ private while the download stays public.
 ## Releasing a new version
 
 ```
-# 1. bump "version" in package.json, then build the installer
-npm run dist
+# 1. bump "version" in package.json, then build on each target platform
+npm run dist:win   # Windows x64 installer
+npm run dist:mac   # universal Apple Silicon + Intel DMG
 
 # 2. stage the installer + manifest into website/downloads/
 npm run release:web
@@ -38,9 +39,8 @@ npm run release:web
 npx netlify deploy --prod --dir=website
 ```
 
-The page reads `downloads/latest.json` to show the current version and point the
-download button at `downloads/DigiTutor-Setup.exe` (a stable filename, so the link
-never changes between versions).
+The page reads `downloads/latest.json` to show the current version and point each
+download button at a stable filename, so links do not change between versions.
 
 ## Custom domain
 

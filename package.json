@@ -1,10 +1,13 @@
 {
   "name": "digitutor",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A study tutor that lives in your system tray: hit a hotkey, it screenshots your screen, listens to your question, and answers with AI.",
   "main": "out/main/index.js",
-  "author": "DigiTutor",
+  "author": "Alp Iskin",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
@@ -15,6 +18,8 @@
     "validate": "npm run typecheck && npm run check:sdk-pin && npm run check:key-storage",
     "geticon": "node scripts/gen-icon.mjs",
     "dist": "npm run build && npm run geticon && electron-builder",
+    "dist:mac": "npm run build && npm run geticon && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --universal",
+    "dist:win": "npm run build && npm run geticon && electron-builder --win --x64",
     "release:web": "node scripts/release-web.mjs",
     "deploy:web": "netlify deploy --prod --dir=website",
     "ship": "npm run dist && npm run release:web && npm run deploy:web"
@@ -29,16 +34,16 @@
   },
   "devDependencies": {
     "@huggingface/transformers": "^4.2.0",
-    "kokoro-js": "^1.2.1",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^22.10.0",
-    "dompurify": "^3.2.3",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.1.8",
-    "electron-vite": "^2.3.0",
+    "dompurify": "^3.4.14",
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^3.0.0",
     "katex": "^0.16.11",
+    "kokoro-js": "^1.2.1",
     "marked": "^15.0.4",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "vite": "^6.4.3"
   }
 }

@@ -1,5 +1,5 @@
 import { app, safeStorage } from 'electron'
-import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { chmodSync, readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import {
   ApiKeySaveResult,
@@ -40,7 +40,9 @@ export const DEFAULT_SETTINGS: Settings = {
   ttsVoice: '',
   sttLang: 'en-US',
   autoVoice: false,
-  launchAtStartup: true,
+  // Let the student opt in from Settings instead of changing login items on
+  // first launch. The same default is respectful on both Windows and macOS.
+  launchAtStartup: false,
   persona: ''
 }
 
@@ -76,7 +78,14 @@ function load(): StoreFile {
 
 function persist(): void {
   if (!cache) return
-  writeFileSync(storePath(), JSON.stringify(cache, null, 2), 'utf-8')
+  const path = storePath()
+  writeFileSync(path, JSON.stringify(cache, null, 2), {
+    encoding: 'utf-8',
+    mode: 0o600
+  })
+  // `mode` only applies when a file is created. Tighten permissions on an
+  // existing config too; Windows ignores POSIX modes and uses safeStorage.
+  if (process.platform !== 'win32') chmodSync(path, 0o600)
 }
 
 export function getSettings(): Settings {

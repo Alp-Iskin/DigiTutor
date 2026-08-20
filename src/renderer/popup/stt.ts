@@ -120,7 +120,7 @@ export class Stt {
       })
     } catch {
       this.active = false
-      this.cb.onStatus('error', 'Microphone access denied - check Windows mic permissions.')
+      this.cb.onStatus('error', 'Microphone access denied - check your system privacy settings.')
       return
     }
 

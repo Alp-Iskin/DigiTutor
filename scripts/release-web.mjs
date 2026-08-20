@@ -7,13 +7,14 @@
 //   npm run release:web   # copy them into website/downloads/ + write latest.json
 //   npm run deploy:web    # upload page + installers to Netlify
 //
-// Platform note: electron-builder can only produce the macOS .dmg on macOS and
-// the Windows .exe on Windows (or via a cross-build toolchain). So on any given
+// Platform note: electron-builder produces the macOS .dmg on macOS and the
+// Windows .exe on Windows (or with a cross-build toolchain). So on any given
 // machine you will usually have one artifact, not both. This script therefore
 // stages whatever it finds and only fails when it finds nothing at all — an
 // earlier version hard-required the .exe, which meant it could never succeed on
 // a Mac.
-import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, statSync } from 'fs'
+import { createHash } from 'crypto'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -36,8 +37,8 @@ const TARGETS = [
     key: 'win',
   },
   {
-    label: 'macOS (Apple Silicon)',
-    source: `DigiTutor-${version}-arm64.dmg`,
+    label: 'macOS (universal)',
+    source: `DigiTutor-${version}-universal.dmg`,
     stable: 'DigiTutor.dmg',
     key: 'mac',
   },
@@ -46,6 +47,7 @@ const TARGETS = [
 mkdirSync(outDir, { recursive: true })
 
 const staged = {}
+const details = {}
 const missing = []
 
 for (const target of TARGETS) {
@@ -55,44 +57,24 @@ for (const target of TARGETS) {
   if (existsSync(src)) {
     copyFileSync(src, dest)
     staged[target.key] = `downloads/${target.stable}`
+    const bytes = readFileSync(src)
+    details[target.key] = {
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+      bytes: statSync(src).size,
+    }
     console.log(`✓ ${target.label.padEnd(22)} → website/downloads/${target.stable}`)
     continue
   }
 
   missing.push(target)
-
-  // No fresh build for this platform, but a previously staged installer may
-  // still be sitting in website/downloads/ (and may already be live). Keep
-  // referencing it, otherwise this run would silently drop a working download
-  // from the manifest and the page would hide that platform's button.
-  if (existsSync(dest)) {
-    staged[target.key] = `downloads/${target.stable}`
-  }
 }
 
-if (Object.keys(staged).length === 0) {
-  console.error('\n✗ No installers found in dist/. Run "npm run dist" first.')
+if (missing.length > 0) {
+  console.error('\n✗ This release needs fresh installers for both platforms.')
   console.error('  Looked for:')
-  for (const t of TARGETS) console.error(`    ${t.source}`)
+  for (const t of missing) console.error(`    dist/${t.source}`)
+  console.error('  Build macOS locally and download the Windows Actions artifact into dist/.')
   process.exit(1)
-}
-
-for (const t of missing) {
-  if (staged[t.key]) {
-    console.warn(`⚠ ${t.label.padEnd(22)} not rebuilt — reusing existing website/downloads/${t.stable}`)
-    continue
-  }
-  // Nothing in dist/ AND nothing already staged. This is the dangerous case:
-  // `netlify deploy --dir=website` publishes the folder as the COMPLETE site,
-  // so any installer that is live but absent from this folder is deleted by the
-  // next deploy. Warn loudly rather than quietly shipping a broken page.
-  console.warn(
-    `\n⚠️  ${t.label}: no installer in dist/ and none staged in website/downloads/.\n` +
-      `   If a ${t.label} build is currently live, DEPLOYING NOW WILL REMOVE IT,\n` +
-      `   because Netlify replaces the whole site with the contents of website/.\n` +
-      `   Either run "npm run dist" on ${t.label} first, or download the live\n` +
-      `   installer into website/downloads/${t.stable} before deploying.`
-  )
 }
 
 // `file` is retained for backward compatibility: older copies of index.html read
@@ -107,6 +89,7 @@ writeFileSync(
       file: staged.win ?? null,
       win: staged.win ?? null,
       mac: staged.mac ?? null,
+      artifacts: details,
     },
     null,
     2

@@ -7,6 +7,12 @@ can be read aloud, and can suggest study resources.
 
 Built for the workflow of: "I'm stuck on this slide → hotkey → talk → get a clear answer."
 
+[Download DigiTutor](https://yourdigitutor.netlify.app/) · [View the source on GitHub](https://github.com/Alp-Iskin/DigiTutor)
+
+This is a student project by Alp Iskin. I began with the screen-aware tutor idea and
+expanded it through iterative, AI-assisted development. I can explain the architecture,
+the security tradeoffs, and the testing behind the current version.
+
 ## How it works
 
 1. Press the global hotkey (default **Ctrl+Shift+Space**).
@@ -24,9 +30,18 @@ Built for the workflow of: "I'm stuck on this slide → hotkey → talk → get 
 
 ## Setup
 
+Development requires Node.js 22.12 or newer.
+
 ```bash
 npm install
 npm run dev
+```
+
+Run the local engineering checks with:
+
+```bash
+npm run validate   # TypeScript, exact Anthropic SDK pin, fail-closed key policy
+npm run build      # bundle main, preload, and renderer code
 ```
 
 On first launch, open **Settings** (tray icon → Settings, or the ⚙ in the popup) and
@@ -45,7 +60,17 @@ replace the legacy value securely.
 ```bash
 npm run build      # bundles main + preload + renderer into out/
 npm run dist       # builds and packages the current platform with electron-builder
+npm run dist:mac   # unsigned universal DMG for Apple Silicon + Intel Macs
+npm run dist:win   # unsigned x64 installer for Windows 10/11
 ```
+
+The downloadable builds are not code-signed yet. Windows may show SmartScreen, and
+macOS may require approval in **System Settings → Privacy & Security**. macOS also asks
+for Screen Recording and Microphone permission when those features are first used.
+The Windows x64 package is built on GitHub's Windows runner, while the universal macOS
+package contains both Apple Silicon and Intel executables. That confirms the packaging,
+not every hardware, permission, or provider combination; broader runtime testing is
+still part of the roadmap.
 
 ## Architecture
 
@@ -55,7 +80,7 @@ src/
     index.ts       app lifecycle, tray, global hotkey, windows, IPC
     screenshot.ts  screen capture via desktopCapturer
     store.ts       JSON settings + fail-closed API key protection (safeStorage)
-    icon.ts        runtime-generated tray/app icons (no binary assets)
+    icon.ts        runtime-generated tray/app icons
     ai/            swappable provider layer (Claude + OpenAI), system prompt
   preload/         contextBridge API exposed to the renderer
   renderer/
@@ -63,6 +88,17 @@ src/
                    streaming answer with Markdown + KaTeX, Kokoro/system speech output
     settings/      provider, model, key, hotkey, voice, persona settings
 ```
+
+The main process owns screen capture, provider calls, and stored credentials. Renderer
+windows use context isolation and a narrow `contextBridge` API, although Electron's full
+renderer sandbox is not enabled. A newly typed key crosses once from Settings to the main
+process through the `setApiKey` IPC method; an existing stored key is never returned to a
+renderer. The main process encrypts it with `safeStorage`, refuses new storage when OS
+protection is unavailable, and disables legacy plaintext values. Model-produced Markdown
+and math are sanitized with DOMPurify before being inserted into the popup.
+
+Runtime tray icons are drawn in `src/main/icon.ts`; `scripts/gen-icon.mjs` produces the
+PNG and ICO assets used by the platform packagers.
 
 ## Notes & roadmap
 
@@ -77,4 +113,4 @@ src/
 - **Resources/diagrams:** answers can include a Resources section with reputable links.
   Richer features (pulling diagrams, screen *recording* instead of a single shot) are
   future work.
-- Provider is swappable; Claude is the default and best for screenshots of slides/math.
+- Provider is swappable; Claude is the default and recommended option for screenshot-based questions.
